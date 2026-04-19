@@ -1,0 +1,61 @@
+.boot-sequence {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.08), transparent 26rem),
+    linear-gradient(180deg, #020304, #090b0f);
+}
+
+.boot-sequence::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(0, 255, 136, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(circle at center, black, transparent 72%);
+}
+
+.boot-terminal {
+  position: relative;
+  width: min(48rem, calc(100vw - 2rem));
+  min-height: 27rem;
+  border: 1px solid rgba(0, 255, 136, 0.28);
+  background: rgba(5, 7, 10, 0.88);
+  padding: clamp(1.1rem, 4vw, 2rem);
+  box-shadow: 0 0 80px rgba(0, 255, 136, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.boot-terminal__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(30, 45, 61, 0.8);
+  padding-bottom: 0.75rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.boot-terminal__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--accent-green);
+  box-shadow: 0 0 18px rgba(0, 255, 136, 0.7);
+}
+
+.boot-terminal__line {
+  min-height: 1.6rem;
+  color: var(--accent-green);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(0.75rem, 2.1vw, 0.95rem);
+  line-height: 1.65;
+}

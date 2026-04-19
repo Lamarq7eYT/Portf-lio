@@ -1,0 +1,340 @@
+{
+  "meta": {
+    "author": "Llew (Lamarq7eYT)",
+    "github": "https://github.com/Lamarq7eYT",
+    "identity": "Full-Stack Developer + ADS student, Brasil. Mistura código, design e animação. Especialidade em segurança web, 3D e experiências digitais imersivas.",
+    "aesthetic": "Cyber / hacker / investigativo. Escuro, agressivo, com personalidade. Não é portfólio — é uma experiência."
+  },
+  "task": "Build a cinematic, scroll-driven, frame-by-frame animated portfolio for Llew — a developer who blends code, security, 3D and motion design. This is not a traditional portfolio. It is a narrative experience styled like a creative studio AAA product.",
+  "stack": {
+    "framework": "React 18 + Vite 5",
+    "language": "TypeScript",
+    "animation_primary": "GSAP 3 (ScrollTrigger for scroll-driven timeline, timeline scrubber, frame control)",
+    "animation_secondary": "Framer Motion (micro-interactions, component entrances)",
+    "3d": "Three.js (scene backgrounds, particles, depth effects)",
+    "styling": "Tailwind CSS v3 + custom CSS variables",
+    "fonts": "JetBrains Mono (code/terminal) + Syne (display headings) — import from Google Fonts",
+    "icons": "Lucide React",
+    "extras": ["react-syntax-highlighter (typed code snippets)", "canvas-confetti (optional easter egg)"]
+  },
+  "design_tokens": {
+    "colors": {
+      "bg_primary": "#090b0f",
+      "bg_secondary": "#0d1117",
+      "accent_green": "#00ff88",
+      "accent_cyan": "#00e5ff",
+      "accent_red": "#ff2d55",
+      "accent_amber": "#ffb800",
+      "text_primary": "#e2e8f0",
+      "text_muted": "#64748b",
+      "border": "#1e2d3d"
+    },
+    "typography": {
+      "display": "Syne, sans-serif — headings, hero text",
+      "mono": "JetBrains Mono, monospace — labels, code, terminal, debug panel",
+      "body": "system-ui, sans-serif — paragraph text"
+    },
+    "effects": {
+      "glitch": "CSS keyframe animation: translate + clip-path on ::before/::after pseudo-elements. Triggered at scroll milestones and on hover of key headings.",
+      "scanlines": "Repeating CSS linear-gradient overlay at 2px intervals, opacity 0.03, on body background.",
+      "noise": "SVG feTurbulence filter applied as a fixed ::before on body, opacity 0.04.",
+      "crt_vignette": "Radial gradient from transparent center to rgba(0,0,0,0.6) at edges, fixed position."
+    }
+  },
+  "architecture": {
+    "entry": "src/main.tsx",
+    "app": "src/App.tsx — single scrollable page. No routing needed. All sections mounted in DOM simultaneously; GSAP ScrollTrigger manages visibility.",
+    "sections_order": [
+      "BootSequence",
+      "Hero",
+      "About",
+      "Projects",
+      "LiveCode",
+      "Contact"
+    ],
+    "file_structure": {
+      "src/": {
+        "components/": {
+          "BootSequence/": ["BootSequence.tsx", "BootSequence.css"],
+          "Hero/": ["Hero.tsx", "HeroCanvas.tsx"],
+          "About/": ["About.tsx"],
+          "Projects/": ["Projects.tsx", "ProjectScene.tsx", "ProjectCard.tsx"],
+          "LiveCode/": ["LiveCode.tsx", "TypedSnippet.tsx"],
+          "Contact/": ["Contact.tsx"],
+          "ui/": ["GlitchText.tsx", "TerminalLine.tsx", "SeverityBadge.tsx", "DebugPanel.tsx", "TimelineScrubber.tsx", "PerformanceToggle.tsx"]
+        },
+        "hooks/": ["useScrollTimeline.ts", "useDebugMode.ts", "useGlitchEffect.ts", "usePerformanceMode.ts"],
+        "data/": ["projects.ts", "skills.ts", "codeSnippets.ts"],
+        "utils/": ["gsapSetup.ts", "threeSetup.ts", "glitch.ts"],
+        "styles/": ["globals.css", "animations.css"],
+        "App.tsx": "Mounts all sections + GlobalEffects + DebugPanel + TimelineScrubber + PerformanceToggle",
+        "main.tsx": "Entry point"
+      }
+    }
+  },
+  "sections": [
+    {
+      "id": "boot_sequence",
+      "name": "Boot Sequence (Tela Inicial — Hook)",
+      "description": "Fullscreen dark terminal boot animation. Runs once on first load. Simulates a system initializing. After boot completes OR user presses any key, transitions to Hero with a hard-cut glitch flash. DO NOT autoplay if user has prefers-reduced-motion.",
+      "content": [
+        "[ SYS ] Initializing kernel.....................OK",
+        "[ NET ] Handshake secured......................OK",
+        "[ MEM ] Allocating identity buffer.............OK",
+        "[ ART ] Loading frame-by-frame renderer........OK",
+        "[ SEC ] AegisCore modules detected.............OK",
+        "[ USR ] Identity resolved: Llew.................OK",
+        "> Press any key to begin."
+      ],
+      "implementation": "Each line types in sequentially using setTimeout + requestAnimationFrame. Monospace font. Green (#00ff88) text. Blinking cursor after last line. Any keydown OR click triggers exit. Exit: GSAP timeline fades out with a horizontal glitch scanline wipe, then Hero fades in."
+    },
+    {
+      "id": "hero",
+      "name": "Hero — Frame-by-Frame Animation Player",
+      "description": "The main cinematic entry. Contains a Three.js canvas as background (particle field, subtle fog). Foreground: the identity reveal + call to scroll. The 'frame-by-frame animation' concept is implemented as a GSAP ScrollTrigger timeline where scroll position maps to animation progress — giving the feeling that the user is scrubbing an animation.",
+      "content": {
+        "headline": "Llew",
+        "subheadline": "Full-Stack Dev · Motion · Security · 3D",
+        "tagline": "Criando experiências digitais onde código vira narrativa.",
+        "scroll_cta": "[ scroll para avançar os frames ]"
+      },
+      "three_js_scene": {
+        "type": "ParticleField",
+        "particle_count": 2000,
+        "description": "Floating cyan/green particles on dark background. Particles drift slowly. On scroll, they accelerate and reorganize into the shape of a grid — visually representing 'system loading'. Use BufferGeometry + Points. Keep draw calls minimal."
+      },
+      "gsap_setup": "Pin the hero section for 200vh of scroll. During this pinned period, GSAP animates: (1) the name 'Llew' glitch-reveals letter by letter, (2) particles converge, (3) subheadline slides in from left, (4) background shifts from full black to #090b0f. After pin ends, scroll continues to About.",
+      "implementation_notes": "Use GSAP ScrollTrigger.create() with pin: true, scrub: 1. All animations inside a master GSAP timeline controlled by the scrub. This is the core of the 'frame player' metaphor."
+    },
+    {
+      "id": "about",
+      "name": "About — Quem é Llew",
+      "description": "Split layout. Left: a terminal block showing identity as a JSON/code object (like his README). Right: skills displayed as a tech tree or animated tag cloud. Animates in as the section scrolls into view via GSAP from-opacity-0.",
+      "left_block_content": {
+        "type": "terminal_code_block",
+        "language": "typescript",
+        "code": "const llewxam = {\n  role: 'Full-Stack Developer',\n  education: 'ADS — Análise e Desenvolvimento de Sistemas',\n  location: 'Brasil 🇧🇷',\n  learning: ['Modelagem 3D', 'Animação 3D', 'Blender', 'WebGL'],\n  focus: 'Experiências digitais que misturam código, design e animação',\n  currently_building: ['AegisCore', 'HackerPage', 'AegisHub'],\n  available: true,\n};"
+      },
+      "right_block_content": {
+        "type": "animated_skill_grid",
+        "categories": [
+          { "label": "Languages", "skills": ["TypeScript", "JavaScript", "Rust", "Python", "C++", "C#", "Java", "Assembly"] },
+          { "label": "Frontend", "skills": ["React", "Next.js", "Vue.js", "Svelte", "Angular", "Vite", "Tailwind", "Three.js", "WebGL"] },
+          { "label": "Backend", "skills": ["Node.js", "Fastify", "Express", "NestJS"] },
+          { "label": "Data", "skills": ["PostgreSQL", "MySQL", "SQLite", "Redis", "Prisma"] },
+          { "label": "Infra", "skills": ["Docker", "Linux", "Git", "pnpm"] },
+          { "label": "Exploring", "skills": ["Blender", "3D Modeling", "3D Animation"] }
+        ],
+        "animation": "Each skill tag fades and slides in with staggered delay (GSAP stagger: 0.05). On hover, tag glows with accent color border + subtle scale."
+      }
+    },
+    {
+      "id": "projects",
+      "name": "Projects — Cenas Narrativas",
+      "description": "Each project is a 'scene' — not a card. The section uses horizontal snap-scrolling OR stacked full-viewport panels, each with its own atmosphere, color accent, and mini-narrative. The scroll continues the main GSAP timeline, making each project feel like a new animation chapter.",
+      "projects": [
+        {
+          "id": "aegiscore",
+          "name": "AegisCore",
+          "repo": "https://github.com/Lamarq7eYT/AegisCore",
+          "tagline": "Plataforma híbrida TypeScript + Rust para defesa web aplicada.",
+          "accent_color": "#ff2d55",
+          "scene_description": "Open with a 'threat detected' visual: red scanlines flash, terminal lines cascade showing attack vectors being blocked. Then calm — the system stabilized. This represents AegisCore neutralizing attacks.",
+          "narrative_hook": "O sistema estava sob ataque. Credential stuffing. Brute force. Session theft. Então AegisCore entrou em ação.",
+          "tech_badges": ["TypeScript", "Rust", "Node.js", "Fastify", "React", "PostgreSQL", "Redis", "N-API", "Docker"],
+          "highlights": [
+            "Arquitetura monorepo com apps/, packages/, native/",
+            "Módulos Rust via N-API: payload normalizer, request inspector, risk scoring",
+            "Rate limiting multidimensional, CSRF, RBAC/ABAC, session defense",
+            "Threat model completo documentado em docs/threat-model.md"
+          ],
+          "visual_element": "Animated diagram of the request lifecycle flow (Boot → GSAP draws SVG path arrows between: Request → CORS → Session → CSRF → Auth → RBAC → Rate Limit → Handler → Audit Log)"
+        },
+        {
+          "id": "hackerpage",
+          "name": "BreachRoom / HackerPage",
+          "repo": "https://github.com/Lamarq7eYT/HackerPage",
+          "live": "https://lamarq7eyt.github.io/HackerPage/",
+          "tagline": "Ambiente imersivo sobre a história dos hackers. Sala investigativa digital.",
+          "accent_color": "#00e5ff",
+          "scene_description": "The panel background becomes a dim blue-tinted room. Think crime board + terminal. Scattered files, glowing monitors implied through CSS shadows. A Three.js particle burst evokes network packet visualization.",
+          "narrative_hook": "E se você pudesse entrar dentro de um incidente hacker? Não ler sobre ele — vivê-lo.",
+          "tech_badges": ["Three.js", "TypeScript", "HTML5", "CSS3", "GitHub Pages"],
+          "highlights": [
+            "Cena 3D imersiva com Three.js na web",
+            "Narrativa histórica sobre segurança da informação",
+            "Design investigativo: sala de análise, terminais, overlays",
+            "Resultado de 2 anos de estudo em 3D, TypeScript e design narrativo"
+          ],
+          "visual_element": "Iframe embed of the live site OR a screenshot that fades in with a CRT monitor frame CSS effect"
+        },
+        {
+          "id": "aegishub",
+          "name": "AegisHub",
+          "repo": "https://github.com/Lamarq7eYT/AegisHub",
+          "tagline": "Rust. Performance. Precisão. Sem compromisso.",
+          "accent_color": "#ffb800",
+          "scene_description": "Minimal, sharp. Dark amber accent. Terminal lines showing Rust compilation output. Represents raw performance and systems-level craft.",
+          "narrative_hook": "Onde JavaScript não é suficiente, Rust assume o controle.",
+          "tech_badges": ["Rust"],
+          "highlights": [
+            "Desenvolvido em Rust — linguagem de systems programming",
+            "Foco em performance, segurança de memória e precisão"
+          ],
+          "visual_element": "Animated terminal showing 'cargo build --release' output with green OK lines"
+        },
+        {
+          "id": "polybech",
+          "name": "Polybech",
+          "repo": "https://github.com/Lamarq7eYT/Polybech",
+          "tagline": "TypeScript. Construindo com precisão.",
+          "accent_color": "#00ff88",
+          "scene_description": "Clean, architectural. Grid lines. Blueprint aesthetic. Shows methodical engineering mindset.",
+          "narrative_hook": "Cada projeto começa com uma estrutura sólida.",
+          "tech_badges": ["TypeScript"],
+          "highlights": [
+            "Projeto TypeScript — estrutura e tipagem forte",
+            "Parte do ecossistema de projetos em construção"
+          ],
+          "visual_element": "Animated TypeScript interface definition appearing token by token"
+        }
+      ],
+      "navigation": "Between project scenes, a glitch transition wipes the screen. The accent color of each scene tints the top border and the particle color of the background Three.js scene."
+    },
+    {
+      "id": "live_code",
+      "name": "Área de Código Vivo",
+      "description": "A section that simulates live coding. Three tabbed snippets appear as if being typed in real time. Includes intentional 'errors' that get corrected mid-typing. Uses react-syntax-highlighter with a custom dark theme.",
+      "snippets": [
+        {
+          "label": "AegisCore — Risk Scoring",
+          "language": "typescript",
+          "code": "// Risk scoring — payload analysis\nconst score = await aegisNative.calculateRisk({\n  ip: req.ip,\n  sessionId: req.session.id,\n  payload: req.body,\n  route: req.url,\n});\n\nif (score >= RISK_BLOCK_THRESHOLD) {\n  throw new ForbiddenError('High-risk request blocked');\n}"
+        },
+        {
+          "label": "Three.js — Particle System",
+          "language": "typescript",
+          "code": "const geometry = new THREE.BufferGeometry();\nconst positions = new Float32Array(COUNT * 3);\n\nfor (let i = 0; i < COUNT; i++) {\n  positions[i * 3] = (Math.random() - 0.5) * 20;\n  positions[i * 3 + 1] = (Math.random() - 0.5) * 20;\n  positions[i * 3 + 2] = (Math.random() - 0.5) * 20;\n}\n\ngeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));\nconst particles = new THREE.Points(geometry, material);\nscene.add(particles);"
+        },
+        {
+          "label": "Rust — Payload Normalizer",
+          "language": "rust",
+          "code": "#[napi]\npub fn normalize_payload(input: String) -> Result<String> {\n    let decoded = urlencoding::decode(&input)\n        .map_err(|e| Error::from_reason(e.to_string()))?;\n    \n    let canonical = decoded\n        .trim()\n        .to_lowercase();\n    \n    Ok(canonical)\n}"
+        }
+      ],
+      "typing_behavior": "Each snippet types at ~40ms per character. Tabs switch manually by clicking. Add a deliberate typo mid-way (e.g., 'cosnt' instead of 'const') that auto-corrects with a brief red flash — like a dev catching their own mistake."
+    },
+    {
+      "id": "contact",
+      "name": "Contact — CTA Final",
+      "description": "The animation 'ends'. The scroll has reached the final frame. A cinematic moment: the section fades in slowly, the particles dissolve, a single line of text appears center screen. Then the CTA emerges.",
+      "sequence": [
+        "[ FRAME 999 / 999 ]",
+        "A história chegou até aqui.",
+        "Mas ela não termina sozinha.",
+        "\"Quer continuar essa história comigo?\""
+      ],
+      "cta_button": {
+        "label": "[ iniciar colaboração ]",
+        "action": "Opens mailto:link OR reveals contact info with a terminal-style decode animation",
+        "animation": "Button appears only AFTER all text lines have rendered. Uses GSAP timeline with staggered delays. On hover: green border glow + subtle horizontal glitch on text."
+      },
+      "links": [
+        { "label": "GitHub", "url": "https://github.com/Lamarq7eYT", "icon": "Github" },
+        { "label": "LinkedIn", "url": "#", "icon": "Linkedin" }
+      ],
+      "footer_text": "Llew · Full-Stack Dev · Brasil · Construindo o futuro, linha a linha."
+    }
+  ],
+  "interactive_features": [
+    {
+      "id": "timeline_scrubber",
+      "name": "Timeline Scrubber (After Effects vibe)",
+      "description": "A fixed bottom bar — always visible — showing overall scroll progress as a timeline. Styled like a video editor timeline: thin track, playhead marker, timestamp. User can DRAG the playhead to jump to any section. Implemented by reading GSAP ScrollTrigger's totalProgress and allowing direct scrub via drag event.",
+      "ui": "Fixed bottom: 0. Height: 40px. Background: rgba(9,11,15,0.95) with top border #1e2d3d. Left label: [FRAME 000/999]. Draggable playhead in green. Right: section name of current position."
+    },
+    {
+      "id": "debug_mode",
+      "name": "Modo Debug (tecla D)",
+      "description": "Hidden panel activated by pressing the 'D' key. Reveals technical metadata about each project as the user scrolls past it. Styled as a terminal overlay in the bottom-right corner. Dismissable with 'D' again or Escape.",
+      "content_per_section": {
+        "aegiscore": {
+          "stack": "TypeScript 80% · Rust 14% · JS 2.5% · CSS 2.1%",
+          "architecture": "Monorepo: apps/ packages/ native/ docs/ tests/",
+          "key_decisions": ["Rust via N-API para módulos críticos de performance", "TypeScript como base da plataforma — melhor DX e manutenção", "Fastify > Express — menor overhead, schema-first"],
+          "challenges": ["Bridge TypeScript ↔ Rust com N-API sem overhead excessivo", "IDOR/BOLA prevention em endpoints com dados cruzados", "Throttling adaptativo por score de risco em tempo real"]
+        },
+        "hackerpage": {
+          "stack": "HTML 62% · TypeScript 38%",
+          "architecture": "breachroom-scene/ (Three.js static) + framer/ (TSX components)",
+          "key_decisions": ["Migrou de Spline para Three.js nativo — mais controle autoral", "GitHub Pages para deploy estático sem backend"],
+          "challenges": ["Construir atmosfera investigativa só com CSS + Three.js", "Narrativa histórica acessível sem glorificar ataques"]
+        }
+      }
+    },
+    {
+      "id": "performance_toggle",
+      "name": "Modo Performance vs Qualidade",
+      "description": "A small toggle button fixed top-right. Two modes: 'Cinemático' (full effects, all particles, all glitch layers) and 'Fluido' (reduced particles to 500, no glitch layers, no scanlines, simplified transitions). Detects prefers-reduced-motion on load and defaults to Fluido if true.",
+      "ui": "Icon-only button. Lucide 'Zap' icon for Cinemático, 'Wind' for Fluido. Tooltip on hover."
+    },
+    {
+      "id": "easter_eggs",
+      "name": "Easter Eggs",
+      "eggs": [
+        {
+          "trigger": "Konami code (↑↑↓↓←→←→BA)",
+          "effect": "Terminal boots with 'ACESSO NÍVEL ROOT CONCEDIDO'. Reveals a hidden section with a 'projetos secretos / beta' message and confetti burst in green/cyan."
+        },
+        {
+          "trigger": "Click on 'Llew' text in hero 7 times",
+          "effect": "Full screen glitch for 1 second, then screen resets with a subtle 'nice try' message in bottom corner that auto-disappears after 3s."
+        },
+        {
+          "trigger": "Type 'AEGIS' anywhere on the page",
+          "effect": "AegisCore status panel slides in from right: 'Sistema ativo. Nenhuma ameaça detectada. Sessão segura.' with green checkmarks."
+        }
+      ]
+    },
+    {
+      "id": "narrative_glitches",
+      "name": "Glitches Narrativos",
+      "description": "At specific scroll milestones (entering Projects section, transitioning between projects), the site deliberately 'breaks': viewport flickers, a distortion layer flashes for 200-400ms, then reveals the next section cleanly. This is intentional — part of the narrative identity. Implemented as GSAP-triggered CSS class additions that activate a full-screen glitch overlay div.",
+      "glitch_overlay": "A fixed full-viewport div, normally display:none, with z-index: 9999. When activated: applies CSS animation that cycles through: horizontal tear, color aberration (R/G/B channel offset via filter), random clip-path rectangles revealing different parts of the background, then fades out. Duration: 300-500ms total."
+    }
+  ],
+  "performance_requirements": {
+    "three_js": "Use a single shared WebGLRenderer across all scenes. Dispose geometries and materials when sections scroll out of view. Max 2000 particles in Cinemático mode, 500 in Fluido.",
+    "gsap": "Register only ScrollTrigger plugin. Use gsap.context() for cleanup in React useEffect.",
+    "lazy_loading": "Split each major section into its own React.lazy() chunk. Only Hero and BootSequence load eagerly.",
+    "mobile": "On screens < 768px: disable Three.js entirely (show static CSS gradient instead), reduce GSAP animations to opacity-only, hide TimelineScrubber, simplify glitch effects to CSS-only. Show a 'melhor em desktop' notice that can be dismissed.",
+    "bundle": "vite.config.ts must include: base: './', manual chunks splitting vendor (three, gsap, framer-motion) from app code. Target bundle: < 400kb gzipped for initial load."
+  },
+  "localization": {
+    "language": "Brazilian Portuguese (pt-BR) for all user-facing text",
+    "code_comments": "English (standard for code)",
+    "dates_and_numbers": "pt-BR locale format"
+  },
+  "deliverables": [
+    "Complete React + Vite + TypeScript project in src/",
+    "All components listed in file_structure implemented",
+    "All 4 projects from data/projects.ts populated with real data from above",
+    "All 3 interactive features (DebugPanel, TimelineScrubber, PerformanceToggle) functional",
+    "At least 2 easter eggs implemented",
+    "At least 2 narrative glitch transitions implemented",
+    "vite.config.ts with base: './', chunk splitting, and build optimizations",
+    "README.md with: npm install, npm run dev, npm run build, explanation of keyboard shortcuts and easter eggs",
+    "index.html with proper og:title, og:description, og:image placeholder for Llew's portfolio"
+  ],
+  "anti_patterns": [
+    "NO generic portfolio layouts (grid of project cards with hover shadows)",
+    "NO purple gradients on white backgrounds",
+    "NO Inter or Roboto fonts",
+    "NO heavy animation without lazy loading or performance fallback",
+    "NO mobile-broken layout",
+    "NO confusing UX — user must always know what to do next (scroll, press key, drag)",
+    "NO placeholder images — use CSS + Three.js + SVG for all visuals",
+    "NO lorem ipsum text — use real content from the projects data above"
+  ],
+  "final_note": "This portfolio should feel like it was made by someone who treats code as craft and design as identity. Every technical decision should be visible and intentional. The person reviewing this portfolio should feel: 'this dev builds things differently.' That is the only success metric."
+}
