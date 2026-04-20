@@ -23,9 +23,9 @@ The Vite config uses `base: './'` and manual chunks for Three.js, GSAP, Framer M
 
 ## GitHub Pages
 
-This repository includes `.github/workflows/deploy-pages.yml`. When the project is pushed to `main`, GitHub Actions builds the Vite app and deploys `dist/` to GitHub Pages.
+This repository includes `.github/workflows/deploy-pages.yml`. When the project is pushed to `main`, GitHub Actions builds the Vite app and publishes `dist/` to the `gh-pages` branch.
 
-In the repository settings, set Pages to use GitHub Actions as the source if GitHub does not enable it automatically on the first workflow run.
+If GitHub does not enable Pages automatically, set Pages to deploy from the `gh-pages` branch in the repository settings.
 
 ## Interaction Map
 
