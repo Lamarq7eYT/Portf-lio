@@ -25,7 +25,9 @@ export const App = () => {
   const debug = useDebugMode();
   const glitch = useGlitchEffect();
   const triggerGlitch = glitch.trigger;
-  const [bootComplete, setBootComplete] = useState(() => window.sessionStorage.getItem('llew-boot-complete') === 'true');
+  const [bootComplete, setBootComplete] = useState(
+    () => window.sessionStorage.getItem('llew-boot-complete') === 'true' || Boolean(window.location.hash)
+  );
   const [mobileNoticeDismissed, setMobileNoticeDismissed] = useState(false);
   const [rootAccess, setRootAccess] = useState(false);
   const [aegisPanel, setAegisPanel] = useState(false);
@@ -85,6 +87,18 @@ export const App = () => {
       triggerGlitch({ label: 'FINAL FRAME', intensity: 'soft', duration: 380 });
     }
   }, [timeline.activeLabel, triggerGlitch]);
+
+  useEffect(() => {
+    if (!bootComplete || !window.location.hash) {
+      return undefined;
+    }
+
+    const timeout = window.setTimeout(() => {
+      document.querySelector(window.location.hash)?.scrollIntoView({ block: 'start' });
+    }, 700);
+
+    return () => window.clearTimeout(timeout);
+  }, [bootComplete]);
 
   const handleHeroNameClick = useCallback(() => {
     setHeroClicks((clicks) => {

@@ -128,6 +128,47 @@
   }
 }
 
+@keyframes shadow-breathe {
+  0%,
+  100% {
+    opacity: 0.58;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    opacity: 0.82;
+    transform: translate3d(0, -8px, 0) scale(1.015);
+  }
+}
+
+@keyframes shadow-scan {
+  0% {
+    transform: translateY(-130%);
+    opacity: 0;
+  }
+
+  20%,
+  70% {
+    opacity: 0.55;
+  }
+
+  100% {
+    transform: translateY(130%);
+    opacity: 0;
+  }
+}
+
+@keyframes shadow-terminal {
+  0%,
+  100% {
+    opacity: 0.34;
+  }
+
+  50% {
+    opacity: 0.75;
+  }
+}
+
 .cursor-blink::after {
   content: '_';
   animation: terminal-cursor 1s steps(2, end) infinite;
@@ -227,4 +268,135 @@
 
 .floating {
   animation: float-slow 7s ease-in-out infinite;
+}
+
+.contact-shadow {
+  pointer-events: none;
+  position: absolute;
+  bottom: 0;
+  right: max(1rem, calc((100vw - 78rem) / 2));
+  z-index: 1;
+  width: min(30rem, 44vw);
+  height: min(46rem, 78vh);
+  opacity: 0.82;
+}
+
+.contact-shadow__halo {
+  position: absolute;
+  inset: 9% 0 0;
+  background:
+    radial-gradient(circle at 58% 28%, rgba(0, 255, 136, 0.2), transparent 18rem),
+    radial-gradient(circle at 44% 38%, rgba(0, 229, 255, 0.13), transparent 20rem);
+  filter: blur(22px);
+}
+
+.contact-shadow__figure {
+  position: absolute;
+  bottom: -2%;
+  right: 8%;
+  width: 72%;
+  height: 88%;
+  animation: shadow-breathe 6.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 26px rgba(0, 255, 136, 0.12));
+}
+
+.contact-shadow__figure::before {
+  content: '';
+  position: absolute;
+  inset: 1rem;
+  z-index: 1;
+  background:
+    radial-gradient(circle at 50% 37%, rgba(255, 45, 85, 0.24), transparent 4.5rem),
+    radial-gradient(circle at 54% 42%, rgba(0, 255, 136, 0.16), transparent 12rem);
+  mix-blend-mode: screen;
+  opacity: 0.52;
+}
+
+.contact-shadow__figure::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background:
+    radial-gradient(circle at 52% 42%, transparent 0 9rem, rgba(0, 0, 0, 0.42) 16rem, rgba(0, 0, 0, 0.82) 28rem),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.82), transparent 40%, rgba(0, 0, 0, 0.35));
+  mix-blend-mode: multiply;
+}
+
+.contact-shadow__portrait {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  opacity: 0.84;
+  filter: brightness(0.54) contrast(1.48) saturate(0.88) drop-shadow(0 0 34px rgba(54, 20, 100, 0.62));
+  mix-blend-mode: screen;
+  mask-image: linear-gradient(90deg, transparent 0, black 18%, black 82%, transparent 100%);
+}
+
+.contact-shadow__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background:
+    radial-gradient(circle at 51% 43%, transparent 0 5.4rem, rgba(0, 0, 0, 0.18) 9rem, rgba(0, 0, 0, 0.58) 72%),
+    linear-gradient(180deg, transparent 0 48%, rgba(0, 0, 0, 0.42));
+  mix-blend-mode: multiply;
+}
+
+.contact-shadow__scan {
+  position: absolute;
+  inset: 7% 8% 0;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.contact-shadow__scan::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 35%;
+  background: linear-gradient(180deg, transparent, rgba(0, 255, 136, 0.18), transparent);
+  animation: shadow-scan 4.8s ease-in-out infinite;
+}
+
+.contact-shadow__terminal {
+  position: absolute;
+  right: 6%;
+  bottom: 11%;
+  display: grid;
+  gap: 0.4rem;
+  border-left: 1px solid rgba(0, 255, 136, 0.36);
+  padding-left: 0.75rem;
+  color: rgba(0, 255, 136, 0.72);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  animation: shadow-terminal 3.6s ease-in-out infinite;
+}
+
+@media (max-width: 1023px) {
+  .contact-shadow {
+    right: -5rem;
+    width: 26rem;
+    opacity: 0.34;
+  }
+}
+
+@media (max-width: 767px) {
+  .contact-shadow {
+    bottom: -4rem;
+    right: -8rem;
+    width: 23rem;
+    height: 34rem;
+    opacity: 0.24;
+  }
+
+  .contact-shadow__terminal {
+    display: none;
+  }
 }

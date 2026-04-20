@@ -63,6 +63,7 @@ export const Contact = ({ reducedMotion }: ContactProps) => {
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_60%,rgba(0,255,136,0.16),transparent_28rem),linear-gradient(180deg,#090b0f,#020304)]" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-hacker to-transparent" aria-hidden="true" />
+      <ShadowAvatar />
       <div className="relative z-10 mx-auto w-full max-w-4xl text-center">
         <div className="mb-10 space-y-4 font-mono text-sm text-slate-300 md:text-base">
           {sequence.slice(0, visibleCount).map((line, index) => (
@@ -144,3 +145,18 @@ export const Contact = ({ reducedMotion }: ContactProps) => {
     </section>
   );
 };
+
+const ShadowAvatar = () => (
+  <div className="contact-shadow" aria-hidden="true">
+    <div className="contact-shadow__halo" />
+    <div className="contact-shadow__figure">
+      <img className="contact-shadow__portrait" src="llew-shadow-avatar.png" alt="" loading="lazy" />
+      <div className="contact-shadow__veil" />
+      <div className="contact-shadow__scan" />
+    </div>
+    <div className="contact-shadow__terminal">
+      <span>[ shadow identity detected ]</span>
+      <span>profile: Llew</span>
+    </div>
+  </div>
+);

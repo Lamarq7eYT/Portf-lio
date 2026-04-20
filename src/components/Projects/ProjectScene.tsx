@@ -220,14 +220,28 @@ const CargoBuildVisual = () => (
 const BlueprintVisual = () => (
   <div className="terminal-shell overflow-hidden p-5">
     <div className="mb-4 flex items-center justify-between font-mono text-[0.68rem] uppercase text-hacker">
-      <span>typed blueprint</span>
-      <span>interface stable</span>
+      <span>polybech architecture map</span>
+      <span>system coherence 94%</span>
     </div>
-    <div className="grid gap-3 sm:grid-cols-2">
-      {['Data model', 'Runtime contract', 'Scene shell', 'Audit boundary'].map((item) => (
-        <div key={item} className="border border-hacker/30 bg-hacker/5 p-4">
-          <p className="font-mono text-xs uppercase text-slate-200">{item}</p>
-          <div className="mt-3 h-1 bg-hacker/40" />
+    <div className="grid gap-4">
+      {[
+        ['01', 'Idea intake', 'raw concept enters the system'],
+        ['02', 'Domain model', 'language becomes typed structure'],
+        ['03', 'Module graph', 'features connect without losing boundaries'],
+        ['04', 'Runtime contract', 'states, actions, and failure paths become explicit'],
+        ['05', 'Ship path', 'the project can grow without collapsing inward']
+      ].map(([step, title, copy], index) => (
+        <div key={title} className="grid grid-cols-[2.5rem_1fr] gap-3 border border-hacker/25 bg-hacker/5 p-3">
+          <div className="grid h-10 w-10 place-items-center border border-hacker/40 font-mono text-[0.68rem] text-hacker">
+            {step}
+          </div>
+          <div>
+            <p className="font-mono text-xs uppercase text-slate-200">{title}</p>
+            <p className="mt-1 text-xs leading-5 text-slate-400">{copy}</p>
+            <div className="mt-2 h-1 bg-border">
+              <div className="h-full bg-hacker/70" style={{ width: `${58 + index * 9}%` }} />
+            </div>
+          </div>
         </div>
       ))}
     </div>

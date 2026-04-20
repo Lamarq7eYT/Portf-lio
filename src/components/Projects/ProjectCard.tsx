@@ -57,7 +57,38 @@ const cargoSteps = [
   'Finished release [optimized] target in 2.41s'
 ];
 
-const blueprintModules = ['AuthGate', 'ProjectScene', 'RuntimeDemo', 'AuditTrail'];
+const blueprintModules = [
+  {
+    name: 'DomainCore',
+    label: 'Domain core',
+    field: 'domainCore',
+    role: 'Models the product language before UI decisions leak into the system.'
+  },
+  {
+    name: 'TypedContracts',
+    label: 'Typed contracts',
+    field: 'typedContracts',
+    role: 'Defines clear boundaries for data, actions, and runtime state.'
+  },
+  {
+    name: 'FeatureGraph',
+    label: 'Feature graph',
+    field: 'featureGraph',
+    role: 'Maps features as composable modules instead of isolated screens.'
+  },
+  {
+    name: 'DXSurface',
+    label: 'DX surface',
+    field: 'dxSurface',
+    role: 'Keeps the project understandable for the person building the next layer.'
+  },
+  {
+    name: 'ReleasePath',
+    label: 'Release path',
+    field: 'releasePath',
+    role: 'Turns the blueprint into something that can ship and evolve.'
+  }
+];
 
 export const ProjectCard = ({ project }: ProjectCardProps) => {
   if (project.demo.kind === 'aegis-simulator') {
@@ -237,25 +268,39 @@ const CargoDemo = ({ project }: ProjectCardProps) => {
 };
 
 const BlueprintDemo = ({ project }: ProjectCardProps) => {
-  const [enabled, setEnabled] = useState<string[]>(['ProjectScene', 'RuntimeDemo']);
+  const [enabled, setEnabled] = useState<string[]>(['DomainCore', 'TypedContracts', 'FeatureGraph']);
 
   const interfaceCode = useMemo(() => {
-    const fields = enabled.map((module) => `  ${module.charAt(0).toLowerCase()}${module.slice(1)}: ModuleConfig;`);
-    return `interface LlewBlueprint {\n${fields.join('\n')}\n  status: 'draft' | 'ready';\n}`;
+    const activeModules = blueprintModules.filter((module) => enabled.includes(module.name));
+    const fields = activeModules.map((module) => `  ${module.field}: ModuleConfig<'${module.name}'>;`);
+    const confidence = Math.min(99, 58 + activeModules.length * 8);
+
+    return `type ModuleStatus = 'draft' | 'stable' | 'shipping';
+
+interface PolybechBlueprint {
+${fields.join('\n')}
+  architectureConfidence: ${confidence};
+  implementationPath: 'prototype' | 'production-ready';
+  status: ModuleStatus;
+}`;
   }, [enabled]);
+
+  const activeRoles = blueprintModules.filter((module) => enabled.includes(module.name));
 
   return (
     <DemoShell project={project}>
       <div className="mb-4 flex flex-wrap gap-2">
         {blueprintModules.map((module) => {
-          const active = enabled.includes(module);
+          const active = enabled.includes(module.name);
           return (
             <button
-              key={module}
+              key={module.name}
               type="button"
               onClick={() =>
                 setEnabled((current) =>
-                  current.includes(module) ? current.filter((entry) => entry !== module) : [...current, module]
+                  current.includes(module.name)
+                    ? current.filter((entry) => entry !== module.name)
+                    : [...current, module.name]
                 )
               }
               className={`border px-3 py-2 font-mono text-[0.68rem] uppercase transition ${
@@ -263,10 +308,18 @@ const BlueprintDemo = ({ project }: ProjectCardProps) => {
               }`}
             >
               {active ? <CheckCircle2 size={13} className="mr-1 inline" aria-hidden="true" /> : null}
-              {module}
+              {module.label}
             </button>
           );
         })}
+      </div>
+      <div className="mb-4 grid gap-2 sm:grid-cols-2">
+        {activeRoles.map((module) => (
+          <div key={module.name} className="border border-hacker/20 bg-hacker/5 p-3">
+            <p className="font-mono text-[0.68rem] uppercase text-hacker">{module.name}</p>
+            <p className="mt-1 text-xs leading-5 text-slate-400">{module.role}</p>
+          </div>
+        ))}
       </div>
       <pre className="overflow-x-auto border border-hacker/30 bg-void/70 p-4 font-mono text-xs leading-6 text-slate-300">
         <code>{interfaceCode}</code>

@@ -91,6 +91,20 @@ export const BootSequence = ({ reducedMotion, onComplete }: BootSequenceProps) =
     return () => window.clearTimeout(timeout);
   }, [exitBoot, exiting, finishedTyping, reducedMotion]);
 
+  useEffect(() => {
+    if (reducedMotion) {
+      return undefined;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setVisibleLines(bootLines);
+      setExiting(true);
+      window.setTimeout(onComplete, 560);
+    }, 9000);
+
+    return () => window.clearTimeout(timeout);
+  }, [onComplete, reducedMotion]);
+
   return (
     <section className={`boot-sequence ${exiting ? 'boot-exit' : ''}`} aria-label="System boot sequence">
       <div className="boot-terminal">

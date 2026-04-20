@@ -142,32 +142,40 @@ export const projects: Project[] = [
     id: 'polybech',
     name: 'Polybech',
     repo: 'https://github.com/Lamarq7eYT/Polybech',
-    tagline: 'TypeScript architecture built with deliberate structure.',
+    tagline: 'A TypeScript engineering system for turning ideas into stable, scalable product architecture.',
     accentColor: '#00ff88',
-    narrativeHook: 'Every ambitious project starts with a structure that will survive the next idea.',
-    techBadges: ['TypeScript', 'Architecture', 'Typed Systems'],
+    narrativeHook:
+      'Polybech is the discipline layer: the place where raw ideas become typed contracts, clean modules, reusable flows, and a project shape that can keep growing without losing control.',
+    techBadges: ['TypeScript', 'Architecture', 'Domain Modeling', 'DX', 'Typed Contracts', 'Modular Systems'],
     highlights: [
-      'A TypeScript-first project built around strong structure.',
-      'Part of a broader ecosystem of projects in progress.',
-      'A visible signal of methodical engineering habits.'
+      'Designed as a serious TypeScript foundation, not a throwaway scaffold.',
+      'Focuses on reusable architecture: contracts, module boundaries, data flow, runtime states, and developer ergonomics.',
+      "Represents Llew's methodical side: planning the system before the interface starts moving.",
+      'Built to support bigger ideas with clear structure instead of letting complexity spread everywhere.',
+      'One of the strongest signals that the craft is not only visual; it is architectural.'
     ],
     visual: 'blueprint',
     icon: Braces,
     demo: {
       kind: 'typescript-blueprint',
-      title: 'Generate typed blueprint',
-      description: 'Toggle modules and watch a TypeScript interface assemble itself.'
+      title: 'Assemble Polybech architecture',
+      description:
+        'Toggle architectural modules and watch Polybech generate a typed product blueprint with contracts, boundaries, runtime state, and implementation priority.'
     },
     debug: {
-      stack: 'TypeScript 100%',
-      architecture: 'Typed project scaffold with emphasis on readable boundaries',
+      stack: 'TypeScript 100% / architecture-first project design',
+      architecture: 'Typed contracts, modular boundaries, state surfaces, reusable flows, and DX-oriented project structure',
       keyDecisions: [
-        'Prefer explicit types for future extension.',
-        'Use structure as a design tool, not only a compiler feature.'
+        'Treat TypeScript as an architecture language, not only a safety net.',
+        'Make boundaries explicit so future features can be added without rewriting the core.',
+        'Prioritize readable contracts and developer experience before visual polish.',
+        'Model runtime states early so the product can scale with less guesswork.'
       ],
       challenges: [
-        'Keep the project flexible without losing clarity.',
-        'Avoid premature complexity while the ecosystem is still forming.'
+        'Keep the project flexible without letting abstraction become noise.',
+        'Build enough structure for growth while still staying fast to iterate.',
+        'Turn a strong internal architecture into a story that portfolio visitors can understand quickly.',
+        'Show that one of the best projects can be quiet, technical, and deeply intentional.'
       ]
     }
   }
